@@ -1,244 +1,257 @@
+# FinBot — Chatbot Educacional com Inteligência Artificial
 
-# FinBot — Chatbot de Investimentos com Inteligência Artificial
+**Disciplina:** Processamento de Linguagem Natural (PLN) — FATEC  
+**Projeto:** FinBot — Aulas 1, 2 e 3  
+**Referência didática:** Professora Cíntia Pinho
 
-Projeto acadêmico desenvolvido para a disciplina de Processamento de Linguagem Natural (PLN), na FATEC, com base nas Aulas 1 e 2 da professora Cíntia Pinho.
+## Visão geral
 
-## Sobre o projeto
+O FinBot é um chatbot educacional desenvolvido em Python para explicar conceitos de investimentos no Brasil, como CDI, Tesouro Direto, CDB, renda fixa, ações e fundos imobiliários.
 
-O FinBot é um chatbot educacional sobre investimentos no Brasil. Seu objetivo é utilizar técnicas de Processamento de Linguagem Natural e modelos de linguagem (LLMs) para responder a perguntas sobre conceitos financeiros de maneira simples e acessível.
+A aplicação utiliza inteligência artificial para responder às perguntas dos usuários, mantendo o histórico das conversas e informações de perfil em um banco de dados MongoDB Atlas.
 
-O usuário pode interagir com a inteligência artificial por meio de uma interface web, realizando perguntas sobre CDI, Tesouro Direto, renda fixa, ações, fundos imobiliários e outros temas de investimentos.
-
-O sistema foi desenvolvido em Python, utilizando FastAPI para a API, Streamlit para a interface, Groq para o modelo de linguagem e Langfuse para rastreamento das interações.
+O projeto tem finalidade acadêmica e não realiza recomendações personalizadas de investimentos.
 
 ## Links do projeto
 
-| Recurso | Link |
+| Recurso | Endereço |
 |---|---|
-| Repositório GitHub | https://github.com/Lucascsg/finbot-pln |
+| Código-fonte | https://github.com/Lucascsg/finbot-pln |
+| Chatbot no Streamlit | https://finbot-pln-fcraetein3dw3hdc3d2iv5.streamlit.app |
 | API no Render | https://finbot-api-d0ut.onrender.com |
-| Documentação interativa da API | https://finbot-api-d0ut.onrender.com/docs |
-| Chat no Streamlit | https://finbot-pln-fcraetein3dw3hdc3d2iv5.streamlit.app |
+| Documentação da API | https://finbot-api-d0ut.onrender.com/docs |
 
 ## Tecnologias utilizadas
 
-- Python — linguagem de programação.
-- FastAPI — desenvolvimento da API REST.
-- Streamlit — interface web do chatbot.
-- Groq — acesso ao modelo de inteligência artificial.
-- LangChain — integração e gerenciamento das mensagens do LLM.
-- Langfuse — observabilidade e rastreamento das conversas.
-- Pydantic — validação dos dados da API.
-- Render — hospedagem da API.
-- Streamlit Community Cloud — hospedagem da interface.
-- GitHub — versionamento e armazenamento do código.
+- **Python:** linguagem principal do projeto.
+- **FastAPI:** desenvolvimento da API REST.
+- **Streamlit:** interface web do chatbot.
+- **Groq:** integração com o modelo de inteligência artificial.
+- **LangChain:** manipulação das mensagens e integração com o modelo.
+- **LangGraph:** organização do fluxo conversacional e gerenciamento de estado.
+- **MongoDB Atlas:** armazenamento de conversas e perfis.
+- **Langfuse:** observabilidade, rastreamento e versionamento de prompts.
+- **Render:** hospedagem da API.
+- **Streamlit Community Cloud:** hospedagem do frontend.
+- **GitHub:** versionamento e armazenamento do código.
 
 ## Funcionalidades implementadas
 
-### Aula 1 — Ambiente e primeiro chatbot
+### Aula 1 — Chatbot com inteligência artificial
 
 - Organização do projeto Python em módulos.
-- Configuração de provedores de modelos de linguagem.
-- Criação do prompt de sistema do FinBot.
-- Integração com modelos de linguagem.
-- Implementação de uma interface de conversação pelo terminal.
+- Configuração do provedor de linguagem.
+- Criação do prompt de sistema.
+- Integração com modelo de linguagem.
+- Implementação de chatbot utilizando o terminal.
 
-### Aula 2 — API, interface e publicação
+### Aula 2 — API e publicação
 
-- Desenvolvimento da API com FastAPI.
-- Implementação da rota de verificação de saúde.
-- Implementação de envio de mensagens ao chatbot.
-- Histórico temporário de conversas separado por sessão.
-- Criação da interface web utilizando Streamlit.
-- Integração entre frontend e backend via HTTP.
+- Desenvolvimento da API utilizando FastAPI.
+- Implementação das rotas `/saude` e `/chat`.
+- Criação da interface web com Streamlit.
+- Comunicação entre frontend e backend por HTTP.
 - Integração com Langfuse para monitoramento das interações.
 - Publicação da API no Render.
-- Publicação da interface no Streamlit Community Cloud.
-- Implementação de testes automatizados para as funcionalidades da API.
+- Publicação do frontend no Streamlit Community Cloud.
+- Implementação de testes automatizados.
+
+### Aula 3 — Memória persistente e prompts versionados
+
+**1. Integração com MongoDB Atlas**
+
+Implementação de banco de dados para armazenar persistentemente as conversas e os perfis dos usuários.
+
+**2. Integração com LangGraph**
+
+Organização do chatbot utilizando um grafo conversacional, com controle do estado e memória de cada sessão.
+
+**3. Memória de curto prazo**
+
+O FinBot consegue recuperar mensagens anteriores da mesma conversa e utilizar essas informações para responder às próximas perguntas.
+
+**4. Memória de longo prazo**
+
+Armazenamento de informações do perfil do usuário, incluindo nome, objetivo e nível de experiência.
+
+**5. Gerenciamento de conversas**
+
+Implementação de funcionalidades para criar novas conversas, listar históricos e recuperar mensagens de sessões anteriores.
+
+**6. Versionamento de prompts no Langfuse**
+
+Criação do prompt `finbot-sistema`, utilizando versões e a etiqueta `production`. Essa funcionalidade permite atualizar as instruções do chatbot sem alterar diretamente seu código-fonte.
+
+**7. Nova interface do FinBot**
+
+Desenvolvimento de uma interface personalizada com identidade visual tecnológica, incluindo:
+
+- Design futurista e minimalista.
+- Alternância entre temas claro e escuro.
+- Interface adaptável a diferentes tamanhos de tela.
+- Barra lateral para gerenciamento de perfis e conversas.
+- Sugestões de perguntas.
+- Histórico de mensagens persistente.
 
 ## Arquitetura do sistema
 
-O funcionamento segue este fluxo:
+O funcionamento do sistema segue este fluxo:
 
-1. O usuário digita uma pergunta na interface Streamlit.
-2. O Streamlit envia a mensagem à API FastAPI hospedada no Render.
-3. A API encaminha a pergunta ao serviço de conversação.
-4. O agente utiliza o modelo de linguagem disponibilizado pela Groq.
-5. A resposta é devolvida à API e apresentada na interface.
-6. O Langfuse registra informações sobre a interação com o modelo.
+1. O usuário acessa o chatbot pelo Streamlit.
+2. A interface envia a mensagem para a API FastAPI.
+3. A API encaminha a solicitação ao serviço responsável pelo chat.
+4. O LangGraph organiza o processamento da conversa.
+5. O MongoDB fornece o histórico e as informações do usuário.
+6. O agente utiliza o prompt configurado e consulta o modelo de linguagem.
+7. A resposta é enviada ao frontend.
+8. O MongoDB mantém o histórico para futuras interações.
+9. O Langfuse registra informações para observabilidade.
 
-Fluxo resumido:
+**Fluxo resumido:**
 
-Usuário → Streamlit → FastAPI → LangChain → Groq (LLM)
+Usuário → Streamlit → FastAPI → LangGraph → Groq
 
-O Langfuse realiza o rastreamento das chamadas ao modelo de linguagem.
+**Serviços complementares:**
+
+- MongoDB Atlas: memória e persistência.
+- Langfuse: prompts e observabilidade.
 
 ## Estrutura do projeto
 
-```text
-app/
-  agents/
-    chatbot.py
-  api/
-    rotas.py
-    schemas.py
-  config/
-    settings.py
-  llm/
-    fabrica.py
-    observabilidade.py
-  prompts/
-    catalogo.py
-    sistema.md
-  servicos/
-    chat.py
-  main.py
+**app/** — Código principal do backend.
 
-frontend/
-  streamlit_app.py
-  requirements.txt
+- `agents/` — chatbot e grafo LangGraph.
+- `api/` — rotas e validação de dados.
+- `config/` — configurações do sistema.
+- `llm/` — integração com modelos e observabilidade.
+- `prompts/` — catálogo e prompt de sistema.
+- `repository/` — conexão com MongoDB, perfis, conversas e checkpointer.
+- `servicos/` — lógica do serviço de chat.
+- `utils/` — tratamento de mensagens.
+- `main.py` — inicialização da API.
 
-scripts/
-  chat_terminal.py
+**frontend/** — Interface web.
 
-tests/
-  conftest.py
-  test_aula1.py
-  test_aula2.py
+- `streamlit_app.py` — interface principal, gerenciamento de conversas, perfis e alternância de temas.
+- `requirements.txt` — dependências do frontend.
 
-COMO_PUBLICAR.md
-README.md
-render.yaml
-requirements.txt
-requirements-dev.txt
-```
+**.streamlit/** — Configurações visuais.
+
+- `config.toml` — configuração do tema-base.
+
+**scripts/** — Scripts auxiliares.
+
+- `chat_terminal.py`
+- `publicar_prompts.py`
+
+**tests/** — Testes automatizados.
+
+- `test_aula1.py`
+- `test_aula2.py`
+- `test_aula3.py`
 
 ## Endpoints da API
 
-### GET /saude
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/saude` | Verificação de funcionamento da API |
+| POST | `/chat` | Envio de mensagens ao chatbot |
+| GET | `/sessoes/{sessao}/mensagens` | Consulta do histórico |
+| GET | `/usuarios/{usuario}/conversas` | Listagem de conversas |
+| GET | `/usuarios/{usuario}/perfil` | Consulta do perfil |
+| PUT | `/usuarios/{usuario}/perfil` | Cadastro e atualização do perfil |
 
-Verifica se a API está disponível e informa o provedor e o modelo configurados.
+## Testes realizados na Aula 3
 
-Exemplo:
+### Teste 1 — Persistência de perfil
 
-```json
-{
-  "status": "ok",
-  "provedor": "groq",
-  "modelo": "openai/gpt-oss-120b"
-}
-```
+Foi cadastrado um perfil de usuário com nome, objetivo e experiência. Posteriormente, foi realizada uma consulta para verificar a recuperação dos dados.
 
-### POST /chat
+**Resultado:** realizado com sucesso.
 
-Recebe a pergunta do usuário e retorna uma resposta gerada pela inteligência artificial.
+### Teste 2 — Memória conversacional
 
-Exemplo de requisição:
+O usuário informou ao chatbot que seu investimento favorito era o Tesouro Selic.
 
-```json
-{
-  "mensagem": "O que é CDI?",
-  "sessao": "teste1",
-  "usuario": "aluno1"
-}
-```
+Em uma segunda mensagem da mesma sessão, perguntou qual investimento havia mencionado anteriormente.
 
-### GET /sessoes/{sessao}/mensagens
+**Resultado:** o FinBot recuperou corretamente a informação.
 
-Consulta o histórico temporário de mensagens de uma sessão.
+### Teste 3 — Persistência após reinicialização
 
-A documentação interativa da API está disponível em:
+A API foi publicada novamente no Render. Depois da atualização, foi realizada outra pergunta sobre a informação anteriormente armazenada.
 
-https://finbot-api-d0ut.onrender.com/docs
+**Resultado:** o FinBot recuperou corretamente a informação após o novo deploy.
 
-## Execução local
+### Teste 4 — Histórico no Streamlit
 
-Requisitos:
+Foi acessada uma conversa anterior diretamente pela barra lateral da aplicação.
 
-- Python 3.12.
-- Chave de API de um provedor de LLM, como a Groq.
-- Dependências Python instaladas.
+**Resultado:** as mensagens do usuário e as respostas do chatbot foram recuperadas corretamente.
 
-No terminal, na raiz do projeto, execute:
+### Teste 5 — Gerenciamento de perfis
 
-```powershell
-py -3.12 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements-dev.txt
-pip install -r frontend/requirements.txt
-```
+O perfil armazenado foi consultado pela interface web.
 
-Crie um arquivo `.env` na raiz do projeto e configure as variáveis necessárias, incluindo `GROQ_API_KEY` e, opcionalmente, as credenciais do Langfuse.
+**Resultado:** os campos de nome, objetivo e experiência foram exibidos corretamente.
 
-Não publique o arquivo `.env` nem as chaves de API no GitHub.
+### Teste 6 — Versionamento de prompt
 
-Inicie a API:
+Foi criada uma segunda versão do prompt no Langfuse, acrescentando uma instrução para o FinBot terminar suas respostas com uma pergunta.
 
-```powershell
-uvicorn app.main:app --reload
-```
+Uma nova mensagem foi enviada pela API e a resposta apresentou o comportamento esperado.
 
-Em outro terminal, inicie a interface:
+**Resultado:** comportamento compatível com a nova versão do prompt.
 
-```powershell
-streamlit run frontend/streamlit_app.py
-```
+### Teste 7 — Interface moderna
 
-Para executar o chatbot da Aula 1 pelo terminal:
+Foi implementado um novo frontend com identidade visual personalizada e alternância entre temas claro e escuro.
 
-```powershell
-python -m scripts.chat_terminal
-```
+**Resultado:** os dois temas foram testados na aplicação publicada.
 
-## Testes
+## Segurança e configurações
 
-O projeto inclui testes automatizados para verificar as rotas da API, o histórico de mensagens, a separação das sessões e a validação das entradas.
+As credenciais utilizadas pelo sistema são armazenadas em variáveis de ambiente.
 
-Para executar os testes:
+O projeto não publica senhas, chaves de API ou credenciais de acesso ao MongoDB no repositório.
 
-```powershell
-pytest -v
-```
+As variáveis principais são:
 
-Os testes automatizados utilizam respostas simuladas para não dependerem de chamadas pagas ao modelo de linguagem.
+- `GROQ_API_KEY`
+- `MONGO_URL`
+- `MONGO_BANCO`
+- `LANGFUSE_PUBLIC_KEY`
+- `LANGFUSE_SECRET_KEY`
+- `LANGFUSE_HOST`
+- `API_URL`
 
-Também foram realizados testes manuais na aplicação publicada:
+O identificador de usuário utilizado na aplicação é adequado à demonstração acadêmica, mas não substitui um sistema completo de autenticação e autorização.
 
-- API `/saude` retornando status 200.
-- API `/chat` respondendo à pergunta "O que é CDI?".
-- Interface Streamlit respondendo à pergunta "O que é Tesouro Direto?".
-- Langfuse registrando as duas interações com o modelo ChatGroq.
+## Limitações
 
-## Observabilidade com Langfuse
-
-O Langfuse permite acompanhar as chamadas realizadas ao modelo de inteligência artificial, registrando informações sobre entradas, saídas e execução das interações.
-
-A integração foi configurada no backend por meio de variáveis de ambiente, mantendo as credenciais fora do código público.
-
-## Limitações da versão atual
-
-- O histórico de conversas é temporário e armazenado na memória do servidor.
-- Os dados não são persistidos em um banco de dados.
-- O chatbot tem finalidade educacional e não fornece recomendações personalizadas de investimento.
-- A integração não garante acesso a cotações financeiras em tempo real.
-- A hospedagem gratuita pode apresentar atraso na primeira requisição após períodos de inatividade.
+- O FinBot tem finalidade exclusivamente educacional.
+- Não realiza recomendações individualizadas de investimentos.
+- Não garante acesso a cotações financeiras em tempo real.
+- A hospedagem gratuita pode apresentar lentidão após períodos de inatividade.
 
 ## Referências
 
-Material da professora Cíntia Pinho:
+**Repositório da professora Cíntia Pinho:**
 
 https://github.com/profcintiapinho/chat_multiagente_inves
 
-Aula 1:
+**Aula 1:**
 
 https://github.com/profcintiapinho/chat_multiagente_inves/blob/main/aulas/aula-01.md
 
-Aula 2:
+**Aula 2:**
 
 https://github.com/profcintiapinho/chat_multiagente_inves/blob/main/aulas/aula-02.md
 
-## Finalidade acadêmica
+**Aula 3:**
 
-Projeto desenvolvido para fins de aprendizagem na disciplina de Processamento de Linguagem Natural (PLN).
+https://github.com/profcintiapinho/chat_multiagente_inves/blob/main/aulas/aula-03.md
 
-As respostas do FinBot são informativas e não substituem a orientação de profissionais habilitados do mercado financeiro.
+---
+
+Projeto desenvolvido para fins acadêmicos na disciplina de Processamento de Linguagem Natural (PLN), na FATEC.
