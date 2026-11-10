@@ -395,7 +395,7 @@ def mostrar(msg: dict) -> None:
     papel = msg.get("papel", "assistant")
     if papel not in ("user", "assistant"):
         papel = "assistant"
-    with st.chat_message(papel, avatar="✦" if papel == "assistant" else "👤"):
+    with st.chat_message(papel, avatar="🤖" if papel == "assistant" else "👤"):
         st.markdown(str(msg.get("conteudo", "")))
 
 
