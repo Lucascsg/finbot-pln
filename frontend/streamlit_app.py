@@ -1,11 +1,30 @@
-"""Chat web - API FastAPI no Render; sem acesso direto a senhas nem ao MongoDB."""
+"""FinBot — interface Streamlit da Aula 3.
+
+Visual renovado, sem alterar as rotas da FastAPI nem o armazenamento MongoDB.
+A API continua sendo o único componente com acesso ao banco e às chaves.
+"""
+
+from __future__ import annotations
+
 import os
 import uuid
+from urllib.parse import quote
+
 import requests
 import streamlit as st
 
 
+st.set_page_config(
+    page_title="FinBot | Inteligência Financeira",
+    page_icon="✦",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={"About": "FinBot — Projeto acadêmico de Processamento de Linguagem Natural."},
+)
+
+
 def config(nome: str, padrao: str) -> str:
+    """Lê a URL pública da API sem colocar segredos no frontend."""
     try:
         return os.getenv(nome) or st.secrets.get(nome, padrao)
     except Exception:
@@ -17,75 +36,279 @@ TEMPO_LIMITE = 120
 
 
 def api(metodo: str, caminho: str, **kwargs):
-    resposta = requests.request(metodo, f"{API_URL}{caminho}", timeout=TEMPO_LIMITE, **kwargs)
+    resposta = requests.request(
+        metodo, f"{API_URL}{caminho}", timeout=TEMPO_LIMITE, **kwargs
+    )
     resposta.raise_for_status()
     return resposta.json()
 
 
-st.set_page_config(page_title="FinBot - Aula 3", page_icon="💬")
-st.title("💬 FinBot")
-st.caption("Chat educacional sobre investimentos — não é recomendação financeira.")
+def rota_usuario(usuario: str, recurso: str) -> str:
+    return f"/usuarios/{quote(usuario, safe='')}/{recurso}"
 
+
+# CSS decorativo, sem JavaScript nem dependências adicionais. O tema do Streamlit
+# também é definido no .streamlit/config.toml incluído no pacote.
+st.markdown(
+    """
+<style>
+:root { color-scheme: dark; }
+html, body { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif; }
+[data-testid="stAppViewContainer"] {
+    background:
+      radial-gradient(ellipse 48rem 27rem at 89% -5%, rgba(80,92,246,.12), transparent 73%),
+      radial-gradient(ellipse 45rem 27rem at 10% 5%, rgba(15,185,173,.065), transparent 72%),
+      #090d16;
+}
+[data-testid="stHeader"] { background: transparent; }
+[data-testid="stMainBlockContainer"] {
+    max-width: 980px; padding-top: 2.2rem; padding-bottom: 8rem;
+}
+[data-testid="stSidebar"] {
+    background: #101624;
+    border-right: 1px solid rgba(160,174,210,.11);
+}
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] { gap: .65rem; }
+[data-testid="stSidebar"] .stButton > button {
+    background: #171e30; border: 1px solid #293347;
+    color: #dce5f4; text-align: left; border-radius: 12px;
+    min-height: 2.6rem; transition: border-color .2s ease, background .2s ease;
+}
+[data-testid="stSidebar"] .stButton > button:hover {
+    background: #202c43; border-color: #7183ff; color: #fff;
+}
+[data-testid="stSidebar"] [data-testid="stExpander"] {
+    border: 1px solid #283246; border-radius: 14px; background: #131b2b;
+}
+[data-testid="stSidebar"] input,
+[data-testid="stSidebar"] [data-baseweb="select"] > div {
+    background-color: #151d2d !important; border-radius: 10px !important;
+    border-color: #364056 !important;
+}
+[data-testid="stChatMessage"] {
+    border: 1px solid rgba(145,161,199,.12);
+    border-radius: 18px; padding: 1.1rem 1.25rem;
+    background: rgba(22,30,46,.75); margin-bottom: .85rem;
+}
+[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] p {
+    line-height: 1.72; color: #e3e9f5;
+}
+[data-testid="stChatInput"] { border: 1px solid #344461; border-radius: 15px; }
+[data-testid="stChatInput"]:focus-within {
+    border-color: #8492ff; box-shadow: 0 0 0 2px rgba(119,132,244,.12);
+}
+[data-testid="stChatInput"] textarea { font-size: .95rem; }
+[data-testid="stBottom"] { background: linear-gradient(transparent, #090d16 35%); }
+[data-testid="stForm"] { background: transparent; border: 0; padding: 0; }
+.stButton > button[kind="primary"],
+[data-testid="stFormSubmitButton"] button {
+    background: linear-gradient(120deg, #6275f4, #8b6eef);
+    color: #fff; border: 0; border-radius: 12px;
+}
+.stButton > button[kind="primary"]:hover,
+[data-testid="stFormSubmitButton"] button:hover { color:#fff; filter:brightness(1.1); }
+.fb-brand { display:flex; align-items:center; gap:.7rem; padding:.35rem 0 1rem; }
+.fb-logo { display:flex; align-items:center; justify-content:center;
+    height:40px; width:40px; border-radius:13px; font-size:21px;
+    color:#fff; background:linear-gradient(135deg,#687bff,#29c5c6); box-shadow:0 7px 22px #576bfa2c; }
+.fb-brand-name { font-size:1.26rem; font-weight:800; letter-spacing:-.045em; color:#f3f6ff; }
+.fb-brand-sub { font-size:.71rem; color:#91a2bf; margin-top:-.15rem; }
+.fb-kicker { display:flex; align-items:center; gap:.5rem; font-size:.72rem;
+    font-weight:700; letter-spacing:.15em; color:#9aabff; text-transform:uppercase; }
+.fb-dot { display:inline-block; height:7px; width:7px; border-radius:50%; background:#43dac5;
+    box-shadow:0 0 0 4px #43dac51c; }
+.fb-hero { margin:.4rem 0 1.8rem; }
+.fb-title { font-weight:800; font-size:clamp(2.6rem,5vw,4.15rem); letter-spacing:-.075em;
+    line-height:1.04; color:#f5f8ff; margin:.7rem 0 .85rem; }
+.fb-title span { color:#b1b7ff; }
+.fb-subtitle { font-size:1rem; line-height:1.7; color:#94a3bd; max-width:650px; }
+.fb-divider { width:100%; height:1px; margin:1.4rem 0; background:linear-gradient(90deg,#41527480,transparent); }
+.fb-section { font-size:.8rem; font-weight:700; letter-spacing:.07em;
+    color:#9daecb; text-transform:uppercase; margin-bottom:.8rem; }
+.fb-empty { border:1px solid #29354a; border-radius:20px;
+    background:linear-gradient(135deg,rgba(31,40,67,.6),rgba(17,25,39,.4));
+    padding:1.7rem 1.7rem 1.25rem; margin:1.75rem 0 1rem; }
+.fb-empty-title { font-size:1.08rem; color:#f1f4ff; font-weight:750; margin-bottom:.35rem; }
+.fb-empty-body { font-size:.9rem; color:#95a6c1; line-height:1.6; }
+.fb-note { font-size:.77rem; color:#7184a2; margin-top:1.15rem; }
+.fb-smalltitle { font-size:.76rem; color:#8193b0; text-transform:uppercase;
+    letter-spacing:.10em; font-weight:700; margin:.75rem 0 .2rem; }
+.fb-sidebar-note { color:#91a2be; font-size:.76rem; line-height:1.55;
+    border-top:1px solid #293347; padding-top:1rem; margin-top:1.1rem; }
+.fb-active { display:inline-flex; align-items:center; border:1px solid #2a514b;
+    background:#102824; color:#a0eedf; font-size:.72rem; padding:.35rem .62rem;
+    border-radius:99px; margin-bottom:.9rem; gap:.45rem; }
+@media(max-width: 760px) {
+ [data-testid="stMainBlockContainer"] { padding: 1.2rem .7rem 7rem; }
+ .fb-title { font-size:2.65rem; }
+ .fb-empty { padding:1.25rem; }
+ [data-testid="stChatMessage"] { padding:.8rem; }
+}
+</style>
+""",
+    unsafe_allow_html=True,
+)
+
+
+# Sessão = identificador da conversa no checkpointer do LangGraph.
 if "sessao" not in st.session_state:
     st.session_state.sessao = uuid.uuid4().hex[:12]
+if "mensagens" not in st.session_state:
     st.session_state.mensagens = []
 
+
 with st.sidebar:
-    st.header("Meu FinBot")
-    usuario = st.text_input("Seu usuário", value="aluno1").strip() or "aluno1"
-    # Ao trocar de usuario, comecamos outra conversa para evitar misturar sessoes.
+    st.markdown(
+        '<div class="fb-brand"><div class="fb-logo">✦</div><div>'
+        '<div class="fb-brand-name">finbot<span style="color:#88a2ff">.</span></div>'
+        '<div class="fb-brand-sub">INTELIGÊNCIA FINANCEIRA</div>'
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown('<span class="fb-active"><span class="fb-dot"></span> Memória inteligente ativada</span>', unsafe_allow_html=True)
+    usuario = st.text_input(
+        "Seu usuário", value="aluno1", help="Identificação para organizar perfil e histórico."
+    ).strip() or "aluno1"
+
+    # Evita misturar mensagens de usuários diferentes na mesma sessão local.
     if st.session_state.get("usuario_atual") != usuario:
         st.session_state.usuario_atual = usuario
         st.session_state.sessao = uuid.uuid4().hex[:12]
         st.session_state.mensagens = []
 
-    with st.expander("Meu perfil"):
+    if st.button("＋  Nova conversa", use_container_width=True, type="primary"):
+        st.session_state.sessao = uuid.uuid4().hex[:12]
+        st.session_state.mensagens = []
+        st.rerun()
+
+    st.markdown('<div class="fb-smalltitle">Seu espaço</div>', unsafe_allow_html=True)
+    with st.expander("◈  Meu perfil"):
         try:
-            perfil = api("GET", f"/usuarios/{usuario}/perfil")
+            perfil = api("GET", rota_usuario(usuario, "perfil"))
             with st.form("perfil"):
                 nome = st.text_input("Nome", perfil.get("nome", ""))
                 objetivo = st.text_input("Objetivo", perfil.get("objetivo", ""))
                 niveis = ["", "iniciante", "intermediário", "avançado"]
-                nivel = perfil.get("experiencia", "")
-                experiencia = st.selectbox("Experiência", niveis, index=niveis.index(nivel) if nivel in niveis else 0)
-                if st.form_submit_button("Salvar perfil"):
-                    api("PUT", f"/usuarios/{usuario}/perfil",
-                        json={"nome": nome, "objetivo": objetivo, "experiencia": experiencia})
-                    st.success("Perfil salvo!")
-        except Exception as erro:
-            st.warning(f"Perfil indisponível: {erro}")
+                atual = perfil.get("experiencia", "")
+                experiencia = st.selectbox(
+                    "Experiência", niveis,
+                    index=niveis.index(atual) if atual in niveis else 0,
+                )
+                if st.form_submit_button("Salvar perfil", use_container_width=True):
+                    api(
+                        "PUT", rota_usuario(usuario, "perfil"),
+                        json={"nome": nome, "objetivo": objetivo, "experiencia": experiencia},
+                    )
+                    st.success("Perfil atualizado!")
+        except requests.RequestException:
+            st.warning("Não foi possível carregar o perfil. Confira a API do Render.")
 
-    if st.button("➕ Nova conversa", use_container_width=True):
-        st.session_state.sessao = uuid.uuid4().hex[:12]
-        st.session_state.mensagens = []
-
-    st.subheader("Conversas")
+    st.markdown('<div class="fb-smalltitle">Histórico de conversas</div>', unsafe_allow_html=True)
     try:
-        for c in api("GET", f"/usuarios/{usuario}/conversas"):
-            if st.button(c.get("titulo", "Conversa"), key=f"conversa_{c['sessao']}", use_container_width=True):
-                st.session_state.sessao = c["sessao"]
-                st.session_state.mensagens = api("GET", f"/sessoes/{c['sessao']}/mensagens")
-    except Exception as erro:
-        st.warning(f"Lista de conversas indisponível: {erro}")
+        conversas = api("GET", rota_usuario(usuario, "conversas"))
+        if not conversas:
+            st.caption("As conversas salvas aparecerão aqui.")
+        for c in conversas:
+            sessao = c.get("sessao", "")
+            if not sessao:
+                continue
+            titulo = c.get("titulo") or "Conversa sem título"
+            if st.button(
+                f"◦  {titulo}", key=f"conversa_{sessao}",
+                use_container_width=True, help="Abrir esta conversa",
+            ):
+                try:
+                    mensagens = api("GET", f"/sessoes/{quote(sessao, safe='')}/mensagens")
+                    st.session_state.sessao = sessao
+                    st.session_state.mensagens = mensagens
+                    st.rerun()
+                except requests.RequestException:
+                    st.error("Não foi possível recuperar esta conversa.")
+    except requests.RequestException:
+        st.warning("Histórico temporariamente indisponível.")
+
+    st.markdown(
+        '<div class="fb-sidebar-note">FinBot • Aula 3 de PLN<br>'
+        'Histórico e perfil armazenados pelo MongoDB.<br>'
+        'Conteúdo educacional, não é consultoria financeira.</div>',
+        unsafe_allow_html=True,
+    )
 
 
-def mostrar(msg: dict):
-    with st.chat_message(msg["papel"]):
-        st.markdown(msg["conteudo"])
+st.markdown(
+    '<div class="fb-hero">'
+    '<div class="fb-kicker"><span class="fb-dot"></span> Assistente de investimentos com IA</div>'
+    '<div class="fb-title">Seu próximo passo<br><span>começa com uma pergunta.</span></div>'
+    '<div class="fb-subtitle">Explore o mundo dos investimentos com explicações claras, '
+    'conversas que continuam de onde você parou e uma experiência feita para aprender.</div>'
+    '</div>',
+    unsafe_allow_html=True,
+)
 
 
-for msg in st.session_state.mensagens:
-    mostrar(msg)
+def mostrar(msg: dict) -> None:
+    papel = msg.get("papel", "assistant")
+    if papel not in ("user", "assistant"):
+        papel = "assistant"
+    with st.chat_message(papel, avatar="✦" if papel == "assistant" else "👤"):
+        st.markdown(str(msg.get("conteudo", "")))
 
-if pergunta := st.chat_input("Pergunte sobre CDI, Tesouro, FIIs, ações..."):
+
+for mensagem in st.session_state.mensagens:
+    mostrar(mensagem)
+
+atalho = None
+if not st.session_state.mensagens:
+    st.markdown(
+        '<div class="fb-empty">'
+        '<div class="fb-empty-title">O que vamos descobrir hoje?</div>'
+        '<div class="fb-empty-body">Escolha um assunto para começar ou escreva sua própria pergunta.</div>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("↗  O que é CDI?", use_container_width=True):
+            atalho = "O que é CDI? Explique de forma simples."
+    with col2:
+        if st.button("◈  Tesouro Direto", use_container_width=True):
+            atalho = "Quais são os tipos de títulos do Tesouro Direto?"
+    with col3:
+        if st.button("▤  Renda fixa", use_container_width=True):
+            atalho = "Como funciona um investimento de renda fixa?"
+    st.markdown(
+        '<div class="fb-note">✧ Aprenda no seu ritmo. As respostas são educativas e não indicam compras ou vendas.</div>',
+        unsafe_allow_html=True,
+    )
+
+
+pergunta = st.chat_input("Pergunte sobre CDI, renda fixa, ações, FIIs...")
+if atalho:
+    pergunta = atalho
+
+if pergunta and pergunta.strip():
+    pergunta = pergunta.strip()
     st.session_state.mensagens.append({"papel": "user", "conteudo": pergunta})
     mostrar(st.session_state.mensagens[-1])
-    with st.spinner("Pensando..."):
+
+    with st.spinner("Analisando sua pergunta..."):
         try:
-            r = api("POST", "/chat", json={"mensagem": pergunta,
-                "sessao": st.session_state.sessao, "usuario": usuario})
-            msg = {"papel": "assistant", "conteudo": r["resposta"]}
-        except Exception as erro:
-            msg = {"papel": "assistant", "conteudo": f"⚠️ Erro ao falar com a API: {erro}"}
-    st.session_state.mensagens.append(msg)
-    mostrar(msg)
+            resultado = api(
+                "POST", "/chat",
+                json={
+                    "mensagem": pergunta,
+                    "sessao": st.session_state.sessao,
+                    "usuario": usuario,
+                },
+            )
+        except requests.RequestException:
+            # Mantém a conversa anterior e informa o erro sem gravar uma
+            # resposta artificial no MongoDB.
+            st.session_state.mensagens.pop()
+            st.error("Não foi possível falar com a API. Confira o serviço no Render e tente novamente.")
+        else:
+            mensagem = {"papel": "assistant", "conteudo": resultado.get("resposta", "")}
+            st.session_state.mensagens.append(mensagem)
+            mostrar(mensagem)
+            st.rerun()  # Atualiza a lista de conversas da barra lateral.
