@@ -1,6 +1,6 @@
-"""GET /saude, POST /chat e GET /sessoes/{sessao}/mensagens."""
+"""Endpoints Aula 2 + endpoints de perfis e conversas da Aula 3."""
 from fastapi import APIRouter
-from app.api.schemas import Mensagem, Pergunta, Resposta
+from app.api.schemas import Mensagem, Pergunta, Resposta, Perfil
 from app.config.settings import settings
 from app.servicos import chat
 
@@ -20,3 +20,18 @@ def perguntar(p: Pergunta):
 @router.get("/sessoes/{sessao}/mensagens", response_model=list[Mensagem])
 def mensagens(sessao: str):
     return chat.historico(sessao)
+
+
+@router.get("/usuarios/{usuario}/conversas")
+def conversas(usuario: str):
+    return chat.listar_conversas(usuario)
+
+
+@router.get("/usuarios/{usuario}/perfil")
+def ver_perfil(usuario: str):
+    return chat.obter_perfil(usuario)
+
+
+@router.put("/usuarios/{usuario}/perfil")
+def salvar_perfil(usuario: str, perfil: Perfil):
+    return chat.salvar_perfil(usuario, perfil.model_dump())

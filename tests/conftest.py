@@ -1,4 +1,4 @@
-"""Fixtures com LLM simulado, sem usar chave nem enviar dados à Groq."""
+"""Dependencias simuladas: testes sem acesso real a Groq ou MongoDB Atlas."""
 import os
 import sys
 from pathlib import Path
@@ -24,10 +24,19 @@ class ModeloFalso:
 
 @pytest.fixture
 def falso(monkeypatch):
+    import mongomock
+    from langgraph.checkpoint.memory import MemorySaver
+    from app.agents import grafo
+    from app.repository import mongo
+
     modelo = ModeloFalso()
     monkeypatch.setattr(fabrica, "criar_modelo", lambda temperatura=0.3: modelo)
-    from app.servicos import chat
-    chat._memoria.clear()  # Evita que os testes compartilhem sessões antigas.
+    banco_falso = mongomock.MongoClient()["finbot_test"]
+    monkeypatch.setattr(mongo, "banco", lambda: banco_falso)
+    memoria = MemorySaver()
+    # Garante que a fixture usa a mesma memoria durante toda a execucao do teste.
+    grafo_teste = grafo.montar_grafo(memoria=memoria)
+    monkeypatch.setattr(grafo, "grafo", lambda: grafo_teste)
     return modelo
 
 

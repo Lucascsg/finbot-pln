@@ -1,8 +1,45 @@
-"""O prompt do sistema fica em arquivo de texto, permitindo versionamento."""
+"""Prompt em Langfuse (production), com arquivo .md como fallback seguro."""
 from pathlib import Path
+from app.config.settings import settings
 
 PASTA = Path(__file__).parent
 
 
 def carregar(nome: str) -> str:
     return (PASTA / f"{nome}.md").read_text(encoding="utf-8").strip()
+
+
+def nomes_locais() -> list[str]:
+    return sorted(p.stem for p in PASTA.glob("*.md"))
+
+
+def nome_langfuse(nome: str) -> str:
+    return f"finbot-{nome}"
+
+
+class PromptLocal:
+    is_fallback = True
+    version = "local"
+
+    def __init__(self, texto: str):
+        self.prompt = texto
+
+    def compile(self, **variaveis) -> str:
+        texto = self.prompt
+        for chave, valor in variaveis.items():
+            texto = texto.replace("{{" + chave + "}}", str(valor))
+        return texto
+
+
+def obter(nome: str):
+    local = carregar(nome)
+    if not settings.langfuse_ativo:
+        return PromptLocal(local)
+    try:
+        from app.llm.observabilidade import cliente_langfuse
+        return cliente_langfuse().get_prompt(
+            nome_langfuse(nome), label="production", fallback=local, cache_ttl_seconds=60
+        )
+    except Exception as erro:
+        print(f"[prompts] Falha no Langfuse ({erro}); usando o prompt local.")
+        return PromptLocal(local)

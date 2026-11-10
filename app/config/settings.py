@@ -1,4 +1,4 @@
-"""Configurações validadas e carregadas das variáveis de ambiente / .env."""
+"""Configuracoes do FinBot carregadas por variaveis de ambiente/.env local."""
 from typing import Literal
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -18,11 +18,14 @@ class Settings(BaseSettings):
     groq_api_key: SecretStr | None = None
     gemini_api_key: SecretStr | None = None
     mistral_api_key: SecretStr | None = None
-
     langfuse_public_key: str | None = None
     langfuse_secret_key: SecretStr | None = None
     langfuse_host: str = "https://cloud.langfuse.com"
     api_url: str = "http://127.0.0.1:8000"
+
+    # Valor local padrao, NAO a URL secreta do Atlas.
+    mongo_url: str = "mongodb://localhost:27017"
+    mongo_banco: str = "finbot"
 
     @property
     def modelo(self) -> str:

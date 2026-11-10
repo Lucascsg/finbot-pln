@@ -1,13 +1,16 @@
-"""Agente de conversa da Aula 2: prompt + janela de histórico + novo pedido."""
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
+"""Aula 3: o chatbot agora e um no do LangGraph."""
+from langchain_core.messages import AIMessage, SystemMessage
 from app.llm import fabrica
+from app.llm.observabilidade import config_prompt
 from app.prompts import catalogo
+from app.utils.mensagens import conversa_limpa
 
 
-def responder(historico: list[BaseMessage], pergunta: str, callbacks: list | None = None) -> AIMessage:
-    mensagens = (
-        [SystemMessage(content=catalogo.carregar("sistema"))]
-        + historico[-10:]
-        + [HumanMessage(content=pergunta)]
+def no_chatbot(estado: dict) -> dict:
+    prompt = catalogo.obter("sistema")
+    sistema = SystemMessage(content=prompt.compile(perfil=estado.get("perfil", "nao informado")))
+    resposta = fabrica.criar_modelo().invoke(
+        [sistema] + conversa_limpa(estado["messages"]),
+        config=config_prompt(prompt),
     )
-    return fabrica.criar_modelo().invoke(mensagens, config={"callbacks": callbacks or []})
+    return {"messages": [AIMessage(content=resposta.content, name="conversa")]}

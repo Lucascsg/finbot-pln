@@ -1,7 +1,4 @@
-"""Rastreamento de chamadas de LLM por sessão com o Langfuse.
-
-Sem credenciais, o chat segue funcionando sem tracing.
-"""
+"""Rastreamento do Langfuse, integrado ao LangChain/LangGraph."""
 import os
 from contextlib import contextmanager
 from app.config.settings import settings
@@ -33,3 +30,9 @@ def rastrear(sessao: str, usuario: str, nome: str = "chat"):
     from langfuse import propagate_attributes
     with propagate_attributes(session_id=sessao, user_id=usuario, trace_name=nome):
         yield
+
+
+def config_prompt(prompt) -> dict:
+    if getattr(prompt, "is_fallback", True):
+        return {}
+    return {"metadata": {"langfuse_prompt": prompt}}

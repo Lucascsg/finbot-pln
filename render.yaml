@@ -1,4 +1,4 @@
-# Blueprint do Render: New + > Blueprint, selecionando o repositório.
+# Render Blueprint: sua URL do MongoDB deve ser cadastrada APENAS no painel Environment.
 services:
   - type: web
     name: finbot-api
@@ -23,3 +23,7 @@ services:
         value: producao
       - key: LANGFUSE_HOST
         value: https://cloud.langfuse.com
+      - key: MONGO_URL
+        sync: false
+      - key: MONGO_BANCO
+        value: finbot
