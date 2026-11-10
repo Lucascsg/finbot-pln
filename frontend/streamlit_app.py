@@ -167,6 +167,19 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
     st.markdown('<span class="fb-active"><span class="fb-dot"></span> Memória inteligente ativada</span>', unsafe_allow_html=True)
+    # O seletor controla apenas a aparência; as sessões do MongoDB não mudam.
+    st.markdown('<div class="fb-smalltitle">Aparência</div>', unsafe_allow_html=True)
+    tema_visual = st.segmented_control(
+        "Tema do FinBot",
+        options=["Escuro", "Claro"],
+        default="Escuro",
+        key="tema_visual",
+        format_func=lambda modo: "☾ Escuro" if modo == "Escuro" else "☀ Claro",
+        required=True,
+        label_visibility="collapsed",
+        width="stretch",
+        bind="query-params",
+    )
     usuario = st.text_input(
         "Seu usuário", value="aluno1", help="Identificação para organizar perfil e histórico."
     ).strip() or "aluno1"
@@ -232,6 +245,137 @@ with st.sidebar:
         '<div class="fb-sidebar-note">FinBot • Aula 3 de PLN<br>'
         'Histórico e perfil armazenados pelo MongoDB.<br>'
         'Conteúdo educacional, não é consultoria financeira.</div>',
+        unsafe_allow_html=True,
+    )
+
+
+# Mantemos o tema original como padrão e aplicamos overrides exclusivamente
+# no modo claro. A opção fica salva na URL para resistir ao recarregamento.
+if tema_visual == "Claro":
+    st.markdown(
+        """
+<style>
+:root { color-scheme: light; }
+html, body, .stApp { color: #20304b !important; }
+[data-testid="stAppViewContainer"] {
+    background:
+      radial-gradient(ellipse 45rem 26rem at 88% -6%, rgba(108,122,255,.11), transparent 74%),
+      radial-gradient(ellipse 45rem 26rem at 7% 4%, rgba(27,164,165,.07), transparent 76%),
+      #f7f9fe !important;
+    color: #20304b !important;
+}
+[data-testid="stHeader"] { background: transparent !important; }
+[data-testid="stBottom"] {
+    background: linear-gradient(transparent, #f7f9fe 37%) !important;
+}
+[data-testid="stSidebar"] {
+    background: #ffffff !important;
+    color: #22324c !important;
+    border-right: 1px solid #e1e7f1 !important;
+}
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] summary,
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
+    color: #24344f !important;
+}
+[data-testid="stSidebar"] .stButton > button:not([kind="primary"]) {
+    background: #f5f7fe !important;
+    color: #283753 !important;
+    border: 1px solid #dce4f2 !important;
+}
+[data-testid="stSidebar"] .stButton > button:not([kind="primary"]):hover {
+    background: #ecf0ff !important;
+    border-color: #8894e9 !important;
+    color: #293bbb !important;
+}
+[data-testid="stSidebar"] .stButton > button[kind="primary"] {
+    color: #fff !important;
+    background: linear-gradient(120deg,#5368e6,#8873e2) !important;
+    border: 0 !important;
+}
+[data-testid="stSidebar"] [data-testid="stExpander"] {
+    background: #f7f9ff !important;
+    border: 1px solid #dce4f2 !important;
+}
+[data-testid="stSidebar"] input,
+[data-testid="stSidebar"] textarea,
+[data-testid="stSidebar"] [data-baseweb="input"] > div,
+[data-testid="stSidebar"] [data-baseweb="select"] > div {
+    background: #f7f9ff !important;
+    color: #172741 !important;
+    -webkit-text-fill-color: #172741 !important;
+    border-color: #ccd8ea !important;
+}
+[data-testid="stSidebar"] [data-testid="stSegmentedControl"] button,
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button {
+    color: #2a3d60 !important;
+    border-color: #d8e0ef !important;
+}
+[data-testid="stSidebar"] [data-testid="stSegmentedControl"] button[aria-pressed="true"],
+[data-testid="stSidebar"] [data-testid="stButtonGroup"] button[aria-pressed="true"] {
+    background: #e5e9ff !important;
+    color: #3547bb !important;
+}
+.fb-brand-name { color: #1a2944 !important; }
+.fb-brand-sub { color: #637693 !important; }
+.fb-smalltitle { color: #667995 !important; }
+.fb-sidebar-note { color: #687a94 !important; border-color: #dce5f2 !important; }
+.fb-active { border-color: #a7e1d5 !important; background: #e6f8f2 !important;
+    color: #167966 !important; }
+.fb-dot { background: #18a895 !important; box-shadow: 0 0 0 4px #16aa9520 !important; }
+.fb-kicker { color: #5064c9 !important; }
+.fb-title { color: #1a2741 !important; }
+.fb-title span { color: #6570d9 !important; }
+.fb-subtitle { color: #5c6e89 !important; }
+.fb-divider { background: linear-gradient(90deg, #c7d3e7, transparent) !important; }
+.fb-section { color: #536681 !important; }
+.fb-empty { background: linear-gradient(135deg,#ffffff,#f0f4ff) !important;
+    border: 1px solid #dce5f2 !important; box-shadow: 0 8px 26px #1b39750c; }
+.fb-empty-title { color: #253651 !important; }
+.fb-empty-body { color: #61728c !important; }
+.fb-note { color: #63748d !important; }
+[data-testid="stChatMessage"] {
+    background: #ffffff !important;
+    border-color: #dfe6f1 !important;
+    box-shadow: 0 5px 20px #22375f0a !important;
+}
+[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] p {
+    color: #243650 !important;
+}
+[data-testid="stChatInput"] {
+    border-color: #cbd7eb !important;
+    background: #ffffff !important;
+    box-shadow: 0 4px 24px #283a600c;
+}
+[data-testid="stChatInput"] textarea {
+    color: #23334f !important;
+    -webkit-text-fill-color: #23334f !important;
+    background: transparent !important;
+}
+[data-testid="stChatInput"] textarea::placeholder { color: #71809c !important; }
+[data-testid="stChatInput"]:focus-within {
+    border-color: #6879eb !important;
+    box-shadow: 0 0 0 3px #6476e823 !important;
+}
+/* Cards das perguntas sugeridas e botões secundários no conteúdo */
+[data-testid="stMain"] .stButton > button:not([kind="primary"]) {
+    color: #344966 !important;
+    background: #ffffff !important;
+    border: 1px solid #d7e0ee !important;
+}
+[data-testid="stMain"] .stButton > button:not([kind="primary"]):hover {
+    color: #344ac5 !important;
+    background: #eef1ff !important;
+    border-color: #8d9ae6 !important;
+}
+[data-testid="stMain"] [data-testid="stMarkdownContainer"] p { color: #31435e; }
+[data-testid="stSpinner"] { color: #4053bd !important; }
+@media (max-width: 760px) {
+  [data-testid="stSidebar"] { border-right: none !important; }
+}
+</style>
+""",
         unsafe_allow_html=True,
     )
 
