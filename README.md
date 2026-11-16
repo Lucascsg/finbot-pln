@@ -1,7 +1,7 @@
 # FinBot — Chatbot Educacional com Inteligência Artificial
 
 **Disciplina:** Processamento de Linguagem Natural (PLN) — FATEC  
-**Projeto:** FinBot — Aulas 1, 2 e 3  
+**Projeto:** FinBot — Aulas 1, 2, 3 e 4 
 **Referência didática:** Professora Cíntia Pinho
 
 ## Visão geral
