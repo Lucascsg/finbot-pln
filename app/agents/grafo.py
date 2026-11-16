@@ -1,28 +1,15 @@
-"""Grafo principal: START -> chatbot -> END, com checkpointer MongoDB."""
+"""Aulas 3 e 4: agente com ferramentas e memoria persistente no MongoDB."""
 from functools import lru_cache
-from typing import Annotated, TypedDict
-
-from langchain_core.messages import AnyMessage, HumanMessage
-from langgraph.graph import START, END, StateGraph
-from langgraph.graph.message import add_messages
-
-from app.agents.chatbot import no_chatbot
+from langchain_core.messages import HumanMessage
+from app.agents.base import criar_agente, fontes_do_turno
 from app.llm.observabilidade import callbacks, rastrear
 from app.repository import checkpointer, conversas, perfis
+from app.tools.mercado import FERRAMENTAS_MERCADO
 from app.utils.mensagens import conversa_limpa
 
 
-class EstadoChat(TypedDict, total=False):
-    messages: Annotated[list[AnyMessage], add_messages]
-    perfil: str
-
-
 def montar_grafo(memoria=None):
-    g = StateGraph(EstadoChat)
-    g.add_node("chatbot", no_chatbot)
-    g.add_edge(START, "chatbot")
-    g.add_edge("chatbot", END)
-    return g.compile(checkpointer=memoria)
+    return criar_agente("finbot", "sistema", FERRAMENTAS_MERCADO, checkpointer=memoria)
 
 
 @lru_cache
@@ -32,19 +19,27 @@ def grafo():
 
 def executar(pergunta: str, sessao: str, usuario: str = "anonimo") -> dict:
     config = {"configurable": {"thread_id": sessao}, "callbacks": callbacks()}
-    entrada = {"messages": [HumanMessage(content=pergunta)], "perfil": perfis.texto_perfil(usuario)}
+    # O contador do guardrail e por pergunta, nao pelo historico inteiro.
+    entrada = {
+        "messages": [HumanMessage(content=pergunta)],
+        "perfil": perfis.texto_perfil(usuario),
+        "passos": 0,
+    }
     with rastrear(sessao, usuario):
         estado = grafo().invoke(entrada, config)
     conversas.registrar(sessao, usuario, pergunta)
-    resposta = estado["messages"][-1]
-    return {"resposta": resposta.content, "agente": "conversa", "fontes": []}
+    final = estado["messages"][-1]
+    ultima_pergunta = max(i for i, m in enumerate(estado["messages"]) if isinstance(m, HumanMessage))
+    fontes = fontes_do_turno(estado["messages"][ultima_pergunta:])
+    return {"resposta": final.content, "agente": "finbot", "fontes": fontes}
 
 
 def historico(sessao: str) -> list[dict]:
     estado = grafo().get_state({"configurable": {"thread_id": sessao}})
     mensagens = estado.values.get("messages", []) if estado else []
     return [
-        {"papel": "user" if m.type == "human" else "assistant", "conteudo": m.content,
+        {"papel": "user" if m.type == "human" else "assistant",
+         "conteudo": m.content,
          "agente": m.name if m.type != "human" else None}
         for m in conversa_limpa(mensagens, limite=1000)
     ]

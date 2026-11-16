@@ -255,3 +255,14 @@ https://github.com/profcintiapinho/chat_multiagente_inves/blob/main/aulas/aula-0
 ---
 
 Projeto desenvolvido para fins acadêmicos na disciplina de Processamento de Linguagem Natural (PLN), na FATEC.
+
+
+## Aula 4 — Ferramentas e loop do agente
+
+- Dados atualizados via Banco Central: Selic, CDI e IPCA.
+- Consultas via brapi.dev: acoes, FIIs e titulos do Tesouro Direto.
+- Loop do agente com ferramentas, guardrail de cinco passos e tratamento de falhas.
+- Fontes retornadas pelo endpoint `/chat` e exibidas no frontend.
+- Testes automatizados com respostas simuladas das APIs.
+
+**Roteiro de entrega:** veja [README_AULA4.md](README_AULA4.md).

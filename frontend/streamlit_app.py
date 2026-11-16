@@ -1,4 +1,4 @@
-"""FinBot — interface Streamlit da Aula 3.
+"""FinBot — interface Streamlit da Aula 4.
 
 Visual renovado, sem alterar as rotas da FastAPI nem o armazenamento MongoDB.
 A API continua sendo o único componente com acesso ao banco e às chaves.
@@ -242,7 +242,7 @@ with st.sidebar:
         st.warning("Histórico temporariamente indisponível.")
 
     st.markdown(
-        '<div class="fb-sidebar-note">FinBot • Aula 3 de PLN<br>'
+        '<div class="fb-sidebar-note">FinBot • Aula 4 de PLN<br>'
         'Histórico e perfil armazenados pelo MongoDB.<br>'
         'Conteúdo educacional, não é consultoria financeira.</div>',
         unsafe_allow_html=True,
@@ -397,6 +397,9 @@ def mostrar(msg: dict) -> None:
         papel = "assistant"
     with st.chat_message(papel, avatar="🤖" if papel == "assistant" else "👤"):
         st.markdown(str(msg.get("conteudo", "")))
+        fontes = msg.get("fontes") or []
+        if fontes:
+            st.caption("Fontes consultadas: " + ", ".join(fontes))
 
 
 for mensagem in st.session_state.mensagens:
@@ -452,7 +455,8 @@ if pergunta and pergunta.strip():
             st.session_state.mensagens.pop()
             st.error("Não foi possível falar com a API. Confira o serviço no Render e tente novamente.")
         else:
-            mensagem = {"papel": "assistant", "conteudo": resultado.get("resposta", "")}
+            mensagem = {"papel": "assistant", "conteudo": resultado.get("resposta", ""), "fontes": resultado.get("fontes", [])}
             st.session_state.mensagens.append(mensagem)
             mostrar(mensagem)
             st.rerun()  # Atualiza a lista de conversas da barra lateral.
+

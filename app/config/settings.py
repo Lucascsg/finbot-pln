@@ -1,4 +1,4 @@
-"""Configuracoes do FinBot carregadas por variaveis de ambiente/.env local."""
+"""Configuracoes do FinBot por variaveis de ambiente, sem armazenar chaves no codigo."""
 from typing import Literal
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -23,9 +23,11 @@ class Settings(BaseSettings):
     langfuse_host: str = "https://cloud.langfuse.com"
     api_url: str = "http://127.0.0.1:8000"
 
-    # Valor local padrao, NAO a URL secreta do Atlas.
     mongo_url: str = "mongodb://localhost:27017"
     mongo_banco: str = "finbot"
+
+    brapi_token: SecretStr | None = None
+    max_passos_agente: int = 5
 
     @property
     def modelo(self) -> str:
