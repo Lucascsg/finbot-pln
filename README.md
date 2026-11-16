@@ -257,12 +257,57 @@ https://github.com/profcintiapinho/chat_multiagente_inves/blob/main/aulas/aula-0
 Projeto desenvolvido para fins acadêmicos na disciplina de Processamento de Linguagem Natural (PLN), na FATEC.
 
 
-## Aula 4 — Ferramentas e loop do agente
 
-- Dados atualizados via Banco Central: Selic, CDI e IPCA.
-- Consultas via brapi.dev: acoes, FIIs e titulos do Tesouro Direto.
-- Loop do agente com ferramentas, guardrail de cinco passos e tratamento de falhas.
-- Fontes retornadas pelo endpoint `/chat` e exibidas no frontend.
-- Testes automatizados com respostas simuladas das APIs.
+## Aula 4 — Ferramentas e Loop do Agente
 
-**Roteiro de entrega:** veja [README_AULA4.md](README_AULA4.md).
+### Objetivo da atividade
+
+Nesta etapa, o FinBot foi atualizado para consultar informações financeiras por meio de ferramentas externas. O objetivo foi permitir que o agente utilize dados obtidos de APIs para responder às perguntas dos usuários, além de registrar as chamadas realizadas no Langfuse.
+
+### Funcionalidades implementadas
+
+Foram integradas quatro ferramentas ao chatbot:
+
+- **Indicadores econômicos:** consulta à Selic, CDI e IPCA pelo Banco Central.
+- **Cotação de ações:** consulta de preços e variações de ações da B3 pela brapi.dev.
+- **Fundos imobiliários:** consulta de preços, dividend yield e outros indicadores de FIIs.
+- **Tesouro Direto:** consulta de taxas e preços dos títulos disponíveis pela API.
+
+Também foram realizadas alterações no funcionamento do agente:
+
+- Implementação do fluxo de chamadas de ferramentas utilizando LangGraph.
+- Retorno ao agente após a execução de uma ferramenta, permitindo que ele utilize os dados na resposta.
+- Limite de cinco decisões do modelo por pergunta, evitando execuções repetitivas.
+- Tratamento de falhas e indisponibilidade das APIs.
+- Exibição das fontes consultadas na resposta do chatbot.
+- Integração do rastreamento das execuções com o Langfuse.
+
+### Código e documentação
+
+Os arquivos da atividade estão disponíveis neste repositório:
+
+- [Ferramentas de consulta financeira](app/tools/mercado.py)
+- [Grafo e fluxo do agente](app/agents/grafo.py)
+- [Testes automatizados da Aula 4](tests/test_aula4.py)
+- [Interface do chatbot](frontend/streamlit_app.py)
+- [Documentação detalhada da Aula 4](README_AULA4.md)
+
+**Commit da atividade:** [Aula 4 — Ferramentas e loop de tool-calling](https://github.com/Lucascsg/finbot-pln/commit/1bb2dcc5abaf5549cc9949a225b7fd7cf0ee0145)
+
+### Links para acesso
+
+- **Chatbot publicado:** https://finbot-pln-fcraetein3dw3hdc3d2iv5.streamlit.app
+- **API no Render:** https://finbot-api-d0ut.onrender.com
+- **Documentação da API:** https://finbot-api-d0ut.onrender.com/docs
+
+### Testes e evidência no Langfuse
+
+Foram adicionados testes automatizados utilizando respostas simuladas das APIs. A atividade também foi verificada por meio do rastreamento das chamadas de ferramentas no Langfuse.
+
+A captura abaixo apresenta uma execução do FinBot, mostrando a sequência de processamento do agente e a utilização da ferramenta `indicadores_economicos` para consultar dados financeiros.
+
+**Figura 1 — Rastreamento da execução do agente no Langfuse**
+
+
+<img width="1892" height="925" alt="image" src="https://github.com/user-attachments/assets/ff45f715-b70c-4c60-b10a-4458fbb900d4" />
+
