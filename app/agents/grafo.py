@@ -4,12 +4,13 @@ from langchain_core.messages import HumanMessage
 from app.agents.base import criar_agente, fontes_do_turno
 from app.llm.observabilidade import callbacks, rastrear
 from app.repository import checkpointer, conversas, perfis
+from app.tools.conhecimento import buscar_documentos
 from app.tools.mercado import FERRAMENTAS_MERCADO
 from app.utils.mensagens import conversa_limpa
 
 
 def montar_grafo(memoria=None):
-    return criar_agente("finbot", "sistema", FERRAMENTAS_MERCADO, checkpointer=memoria)
+    return criar_agente("finbot", "sistema", [*FERRAMENTAS_MERCADO, buscar_documentos], checkpointer=memoria)
 
 
 @lru_cache

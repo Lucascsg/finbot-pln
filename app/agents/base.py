@@ -34,6 +34,12 @@ def criar_agente(nome: str, nome_prompt: str, ferramentas: list, checkpointer=No
             "Nunca invente numeros, horarios ou datas; informe a data e a fonte. "
             "Se a consulta falhar, explique que o dado nao esta disponivel."
         )
+        if any(f.name == "buscar_documentos" for f in ferramentas):
+            texto_sistema += (
+                "\nPara conceitos e regras, use buscar_documentos. Baseie a explicação nos trechos "
+                "encontrados e cite o nome exato de cada arquivo entre colchetes. Se os trechos "
+                "forem insuficientes, explique o que não encontrou."
+            )
         sistema = SystemMessage(content=texto_sistema)
         modelo = fabrica.criar_modelo(temperatura=0.1).bind_tools(ferramentas)
         mensagens = [sistema] + turno_atual(estado["messages"])

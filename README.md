@@ -311,3 +311,20 @@ A captura abaixo apresenta uma execução do FinBot, mostrando a sequência de p
 
 <img width="1892" height="925" alt="image" src="https://github.com/user-attachments/assets/ff45f715-b70c-4c60-b10a-4458fbb900d4" />
 
+
+## Aula 5 — Busca em documentos
+
+O FinBot consulta cinco textos didáticos e dois PDFs da B3 com a ferramenta
+`buscar_documentos`. Cada resultado inclui o arquivo de origem, o trecho e
+a nota de similaridade. O modo padrão é TF-IDF.
+
+1. Instale as dependências com `python -m pip install -r requirements-dev.txt`.
+2. Com o MongoDB de desenvolvimento configurado no ambiente, execute
+   `python -m scripts.indexar`. No Render, a primeira busca cria o índice automaticamente se ele estiver vazio.
+   Para atualizar um índice existente, execute o mesmo comando com o banco da API.
+3. Rode `python -m pytest -q`.
+4. No Streamlit, pergunte **O que é o leilão de abertura, segundo o manual da B3?**
+   Confira a citação na resposta. No Langfuse, abra a chamada
+   `buscar_documentos` e expanda a saída para ver os campos `fonte` e `trecho`.
+
+[Material e documentos da Aula 5](https://github.com/profcintiapinho/chat_multiagente_inves/blob/main/aulas/aula-05.md)

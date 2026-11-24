@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     brapi_token: SecretStr | None = None
     max_passos_agente: int = 5
 
+    rag_modo: Literal["tfidf", "embeddings"] = "tfidf"
+
     @property
     def modelo(self) -> str:
         return self.llm_modelo or MODELOS_PADRAO[self.llm_provedor]

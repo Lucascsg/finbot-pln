@@ -17,3 +17,8 @@ pymongo>=4.10
 
 # Aula 4: consultas HTTP a fontes de mercado
 requests>=2.32
+
+# Aula 5
+numpy>=1.26
+scikit-learn>=1.5
+pypdf>=5.0
