@@ -312,19 +312,41 @@ A captura abaixo apresenta uma execução do FinBot, mostrando a sequência de p
 <img width="1892" height="925" alt="image" src="https://github.com/user-attachments/assets/ff45f715-b70c-4c60-b10a-4458fbb900d4" />
 
 
-## Aula 5 — Busca em documentos
+## Aula 5 — Busca em documentos com RAG
 
-O FinBot consulta cinco textos didáticos e dois PDFs da B3 com a ferramenta
-`buscar_documentos`. Cada resultado inclui o arquivo de origem, o trecho e
-a nota de similaridade. O modo padrão é TF-IDF.
+**Reposição de 10/10/2026 · Processamento de Linguagem Natural · Fatec Mauá**  
+**Aluno:** Lucas Casagrande Silva
 
-1. Instale as dependências com `python -m pip install -r requirements-dev.txt`.
-2. Com o MongoDB de desenvolvimento configurado no ambiente, execute
-   `python -m scripts.indexar`. No Render, a primeira busca cria o índice automaticamente se ele estiver vazio.
-   Para atualizar um índice existente, execute o mesmo comando com o banco da API.
-3. Rode `python -m pytest -q`.
-4. No Streamlit, pergunte **O que é o leilão de abertura, segundo o manual da B3?**
-   Confira a citação na resposta. No Langfuse, abra a chamada
-   `buscar_documentos` e expanda a saída para ver os campos `fonte` e `trecho`.
+Nesta aula, implementei a busca em documentos no FinBot usando RAG (Retrieval-Augmented Generation). O agente passou a consultar cinco textos sobre investimentos e dois PDFs oficiais da B3 para responder às perguntas e citar o arquivo de origem entre colchetes.
 
-[Material e documentos da Aula 5](https://github.com/profcintiapinho/chat_multiagente_inves/blob/main/aulas/aula-05.md)
+### Links da entrega
+
+- [Acessar o FinBot no Streamlit — acesso público](https://finbot-pln-fcraetein3dw3hdc3d2iv5.streamlit.app/)
+- [Consultar o código da atividade — tag aula-5](https://github.com/Lucascsg/finbot-pln/tree/aula-5)
+- [Ver os documentos utilizados pelo FinBot](https://github.com/Lucascsg/finbot-pln/tree/aula-5/documentos)
+
+### Como a busca funciona
+
+Os documentos são divididos em trechos e armazenados no MongoDB com o nome do arquivo de origem. Quando o usuário faz uma pergunta sobre um conceito ou uma regra, o agente aciona a ferramenta `buscar_documentos`. A busca usa TF-IDF e similaridade de cosseno para selecionar até três trechos relevantes. O agente usa esses trechos para elaborar a resposta e indicar a fonte.
+
+### Validação no Streamlit e no Langfuse
+
+**1. Resposta do FinBot com a fonte**
+
+No aplicativo público, fiz a pergunta: “O que é o leilão de abertura? Consulte o manual de negociação da B3 e cite o arquivo entre colchetes.” O FinBot explicou o conceito e citou `[manual_negociacao_b3.pdf]` no corpo da resposta.
+
+<img width="1363" height="936" alt="image" src="https://github.com/user-attachments/assets/850d3d90-8625-4eb8-8739-f65d2144f482" />
+
+
+**2. Trecho do PDF recuperado pela ferramenta**
+
+No Langfuse, a chamada de `buscar_documentos` registrou a consulta `leilão de abertura B3`. A saída mostra o arquivo `manual_negociacao_b3.pdf` no campo `fonte` e, no campo `trecho`, a passagem do manual sobre os procedimentos de leilão.
+
+<img width="1890" height="913" alt="image" src="https://github.com/user-attachments/assets/0812db31-c72c-44e4-b486-55ed17569295" />
+
+
+### Testes automatizados
+
+Os 28 testes do projeto passaram. Entre os testes da Aula 5, foi verificado que a consulta `leilão de abertura` recupera um trecho de `manual_negociacao_b3.pdf`.
+
+[Ver os testes da Aula 5](https://github.com/Lucascsg/finbot-pln/blob/aula-5/tests/test_aula5.py)
